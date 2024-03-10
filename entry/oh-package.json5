@@ -6,7 +6,7 @@
   "author": "liyufeng",
   "license": "",
   "dependencies": {
-    "@rex/fast_http": "file:../fast_http_request",
+    "@rex/fast_http": "file:../fast_https_request",
     "@rex/fast_ui": "file:../base/fast_ui"
   }
 }

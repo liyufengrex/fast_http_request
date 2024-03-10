@@ -1,9 +1,11 @@
 {
+  "author": "lixiaohong",
   "name": "fast_http",
+  "description": "基于 HarmonyOS NEXT 开发,面相对象式网络请求框架,支持将https请求返回的数据直接转换成指定类型的对象",
+  "main": "Index.ets",
+  "repository": "https://github.com/liyufengrex/fast_http_request.git",
   "version": "1.0.0",
-  "description": "Please describe the basic information.",
-  "main": "",
-  "author": "",
+  "homepage": "https://github.com/liyufengrex/fast_http_request.git",
   "license": "",
   "dependencies": {
   },

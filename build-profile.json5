@@ -39,8 +39,8 @@
       "srcPath": "./base/fast_ui"
     },
     {
-      "name": "fast_http_request",
-      "srcPath": "./fast_http_request"
+      "name": "fast_https_request",
+      "srcPath": "./fast_https_request"
     }
   ]
 }

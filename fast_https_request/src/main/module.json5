@@ -1,6 +1,6 @@
 {
   "module": {
-    "name": "fast_http_request",
+    "name": "fast_https_request",
     "type": "har",
     "deviceTypes": [
       "default",

@@ -7,7 +7,7 @@
 
 ### 安装
 ```ts
-ohpm install @rex/fast_http_request
+ohpm install @rex/fast_https_request
 ```
 
 ### 使用
