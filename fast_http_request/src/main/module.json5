@@ -1,0 +1,11 @@
+{
+  "module": {
+    "name": "fast_http_request",
+    "type": "har",
+    "deviceTypes": [
+      "default",
+      "tablet",
+      "2in1"
+    ]
+  }
+}
