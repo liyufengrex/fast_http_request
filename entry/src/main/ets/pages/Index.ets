@@ -1,6 +1,7 @@
-import { HttpRequest } from '@rex/fast_http/Index';
+import { HttpRequest, HttpResponse } from '@rex/fast_http/Index';
 import { CommonFillButton, CommonMainTitle, CommonSubTitle, FastLoadingDialog, FastToast } from '@rex/fast_ui/Index';
 import { http } from '@kit.NetworkKit'
+import { BaseRequestOption } from '@rex/fast_http/src/main/ets/base/HttpRequestOption';
 
 @Extend(Column)
 function ColumnStyle() {
@@ -97,6 +98,24 @@ class GetRequest extends HttpRequest<CommonResponseModel<ResponseModel>> {
   public getQuery: Record<string, string> = {
     'sort': '热歌榜',
     'format': 'json',
+  }
+
+  // 重写该方法打印 request
+  protected onRequestChain(request: BaseRequestOption): void {
+    console.log(`fast_http_request >>> url : ${this.requestUrl()}`)
+    if (request.postBody != null){
+      console.log(`fast_http_request >>> POST Parmas : ${JSON.stringify(request.postBody)}`)
+    }
+  }
+
+  // 重写该方法打印 response
+  protected onResponseChain(response: HttpResponse): void {
+    console.log(`fast_http_request >>> response : ${JSON.stringify(response)}`)
+  }
+
+  // 重写该方法打印 http error
+  protected onErrorChain(error: Error): void {
+    console.log(`fast_http_request >>> error : ${JSON.stringify(error)}`)
   }
 }
 

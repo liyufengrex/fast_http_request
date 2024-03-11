@@ -46,7 +46,9 @@ class ResponseModel {
   }
 }
 ```
-#### 3. 声明网络请求，指定要求返回的泛型类型
+#### 3. 声明网络请求，指定要求返回的泛型类型， 
+
+##### GET请求这么写
 ```ts
 // HttpRequest<T> 将response的返回数据直接转成指定的泛型
 class GetRequest extends HttpRequest<CommonResponseModel<ResponseModel>> {
@@ -64,6 +66,22 @@ class GetRequest extends HttpRequest<CommonResponseModel<ResponseModel>> {
 }
 ```
 
+##### POST请求这么写
+```ts
+class PostRequest extends HttpRequest<CommonResponseModel<ResponseModel>> {
+  // 重写请求类型，默认是 POST
+  public method: http.RequestMethod = http.RequestMethod.POST;
+  // 重写域名domain
+  public domain: string = 'https://api.uomg.com';
+  // 重写请求路径
+  public path: string = '/api/comments.163';
+  // POST 传参赋值
+  public postBody: Record<string, string> = {
+    'format': 'json',
+  }
+}
+```
+
 #### 4. 发送网络请求，可直接得到指定类型的对象
 ```ts
 try {
@@ -74,6 +92,34 @@ try {
       let errorMessage = JSON.stringify(e);
       console.log(`error == ${errorMessage}`)
     }
+```
+
+#### 5. 如何打印网络日志
+在继承 HttpRequest 时选择重写内部三方方法，可用于分别打印 request、response、httpError 
+
+```ts
+class PostRequest extends HttpRequest<T> {
+  ....省略具体的请求
+  
+  // 重写该方法打印 request
+  protected onRequestChain(request: BaseRequestOption): void {
+    console.log(`fast_http_request >>> url : ${this.requestUrl()}`)
+    if (request.postBody != null){
+      console.log(`fast_http_request >>> POST Parmas : ${JSON.stringify(request.postBody)}`)
+    }
+  }
+
+  // 重写该方法打印 response
+  protected onResponseChain(response: HttpResponse): void {
+    console.log(`fast_http_request >>> response : ${JSON.stringify(response)}`)
+  }
+
+  // 重写该方法打印 http error
+  protected onErrorChain(error: Error): void {
+    console.log(`fast_http_request >>> error : ${JSON.stringify(error)}`)
+  }
+}
+
 ```
 
 

@@ -59,12 +59,17 @@ abstract class BaseRequestOption extends HttpRequestOption {
   public async request(): Promise<HttpResponse> {
     // 每一个httpRequest对应一个HTTP请求任务，不可复用
     let httpRequest = http.createHttp()
+    this.onRequestChain(this);
     try {
       let response = await httpRequest.request(
         this.requestUrl(),
-        this.requestOptions()
+        this.requestOptions(),
       )
       let resultResponse = new HttpResponse(response, this)
+      this.onResponseChain(resultResponse)
+      if (!resultResponse.httpSuccess) {
+        throw Error(`http code is ${response.responseCode}}`)
+      }
       return resultResponse
     } catch (e) {
       this.onErrorChain(e)
