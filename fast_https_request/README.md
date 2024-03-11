@@ -15,7 +15,7 @@ ohpm install @rex/fast_https_request
 #### 1. 导入引用
 ```ts
 import { http } from '@kit.NetworkKit'
-import { HttpRequest } from '@rex/fast_http/Index';
+import { HttpRequest } from '@rex/fast_https_request/Index';
 ```
 #### 2. 定义接口请求返回的数据模型
 

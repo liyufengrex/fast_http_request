@@ -10,7 +10,7 @@ abstract class HttpRequestOption {
   public dataType: http.HttpDataType = http.HttpDataType.OBJECT //数据类型
   public header: Record<string, string> = {};
   public getQuery: Record<string, string> = {}; //GET请求数据，用于拼接在url上
-  public postBody?: Object; //POST请求的body数据
+  public postBody?: Object | Record<string, object>; //POST请求的body数据
   // 配置
   public readTimeout: number = 10000;
   public connectTimeout: number = 10000;
