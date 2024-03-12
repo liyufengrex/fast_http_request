@@ -17,17 +17,33 @@ ohpm install @rex/fast_https_request
 import { http } from '@kit.NetworkKit'
 import { HttpRequest } from '@rex/fast_https_request/Index';
 ```
+举个栗子🌰：
+
 #### 2. 定义接口请求返回的数据模型
 
-举个栗子🌰：
+首先，我们定义一个常规返回的通用数据模型：
+
+JSON 结构一般是这样
 ```ts
-/// 接口返回结果通用模型
+{
+    'code': 100
+    'data': {
+        // 里面是具体的业务模型
+    }
+}
+```
+对应的模型我们定义如下：
+
+```ts
+/// 接口返回结果通用模型, 泛型T为具体的业务模型对象
 interface CommonResponseModel<T> {
   code: number
   data: T
 }
-
-/// 接口返回结果业务模型, 用于测试返回的 response 转 业务模型
+```
+比如：我们新建一个业务模型，名字为 `ResponseModel`，包含字段如下：
+```ts
+/// 具体的业务模型
 class ResponseModel {
   artistsname: string
   name: string
@@ -46,9 +62,11 @@ class ResponseModel {
   }
 }
 ```
-#### 3. 声明网络请求，指定要求返回的泛型类型， 
+#### 3. 声明网络请求，通过泛型指定要求返回的对象类型
 
-##### GET请求这么写
+声明网络请求，指定将返回结果直接转换成上面的业务模型，我们这么做：
+
+##### 如果是GET请求，这么写
 ```ts
 // HttpRequest<T> 将response的返回数据直接转成指定的泛型
 class GetRequest extends HttpRequest<CommonResponseModel<ResponseModel>> {
@@ -66,7 +84,7 @@ class GetRequest extends HttpRequest<CommonResponseModel<ResponseModel>> {
 }
 ```
 
-##### POST请求这么写
+##### 如果是POST请求，这么写
 ```ts
 class PostRequest extends HttpRequest<CommonResponseModel<ResponseModel>> {
   // 重写请求类型，默认是 POST
@@ -82,10 +100,10 @@ class PostRequest extends HttpRequest<CommonResponseModel<ResponseModel>> {
 }
 ```
 
-#### 4. 发送网络请求，可直接得到指定类型的对象
+#### 4. 发送网络请求
 ```ts
 try {
-      const response : CommonResponseModel<ResponseModel> = await request.execute()
+      const response : CommonResponseModel<ResponseModel> = await new GetRequest().execute()
       let responseTxt = JSON.stringify(response);
       console.log(`response == ${responseTxt}`)
     } catch (e) {
@@ -93,9 +111,17 @@ try {
       console.log(`error == ${errorMessage}`)
     }
 ```
+使用上面声明的请求 `new GetRequest().excute()` 或者 `new PostRequest().excute()` 获取到的结果为 `CommonResponseModel<ResponseModel>` 对象
+
+```ts
+let data : ResponseModel = await new GetRequest().execute().data
+```
+
+这样就获取到了我们的业务模型对象
+
 
 #### 5. 如何打印网络日志
-在继承 HttpRequest 时选择重写内部三方方法，可用于分别打印 request、response、httpError 
+在继承 HttpRequest 时选择重写内部三方方法，可用于分别打印 request、response、httpError
 
 ```ts
 class PostRequest extends HttpRequest<T> {
@@ -121,5 +147,58 @@ class PostRequest extends HttpRequest<T> {
 }
 
 ```
+
+#### 6. 如何在工程中，统一管理，进行复用
+
+我们可以按照域名定义一个通用的 `CommonRequest`，例如：
+
+```ts
+class CommonRequest<T> extends HttpRequest<CommonResponseModel<T>> {
+  // 重写域名domain
+  public domain: string = 'https://api.uomg.com';
+  
+  ///这里自己把log加上，统一打印请求日志
+}
+```
+
+遇到具体的业务时
+
+假设我们业务接口返回的的数据，定义模型名称为 `BusinessModel`
+
+```ts
+class BusinessModel {
+    /// 具体的业务字段
+}
+```
+
+所有的业务请求，我们可以通过继承 `CommonRequest`，创建具体的业务请求，指定泛型即可
+
+```ts
+class BusinessRequest extends CommonRequest<BusinessModel> {
+    // Model 是请求参数，这里我定义为 Record 类型，按照自己的需要也可以定义为其他
+    constructor(requestParams: Record<string, Object>){
+        this.postBody = requestParams;
+    }
+    
+    // 重写请求路径
+  public path: string = '具体的url';
+}
+```
+
+如上便完成了一个业务请求的封装, 通过 new 即可使用
+
+```ts
+let requestParams = {
+    'pageIndex': '1',
+    'keywords': 'rex',
+}
+
+let request = new BusinessRequest(requestParams);
+
+request.excute().then((data)=>{
+    // 这里获取的 data 类型为 CommonResponseModel<BusinessModel>
+})
+```
+
 
 
